@@ -24,23 +24,35 @@
 ```mermaid
 graph TD
     User[User] -->|Uploads PDF| Frontend[React Frontend]
-    Frontend -->|POST /analyze-pdf| Backend[Node.js Server]
+    Frontend -->|POST /analyze-pdf| Backend[Node.js Server (Express)]
     Backend -->|Extract Text| PDFParser[pdf-parse]
     
-    subgraph "AI Logic Core"
-        PDFParser -->|Raw Text| LLM_Analyzer[LLM Analyzer Agent]
-        LLM_Analyzer -->|Prompt: Skill Taxonomy & Scoring| LLM_Analyzer
-        LLM_Analyzer -->|Returns JSON| AnalysisResult[Structured Analysis Data]
+    subgraph "Agentic AI Core (Multi-Key Resilience)"
+        PDFParser -->|Raw Text| ATSAgent[ATS Agent Class]
         
+        %% Analysis Phase
+        ATSAgent -->|Analyze with OpenRouter/Gemini| AnalysisResult[Structured JSON Report]
         AnalysisResult -->|Review| User
-        User -->|Request Rewrite| LLM_Generator[LLM Generator Agent]
         
-        AnalysisResult -->|Context| LLM_Generator
-        LLM_Generator -->|Two-Pass Rewrite| NewResume[Optimized Resume Markdown]
+        %% Generation Phase
+        User -->|Request Rewrite + Custom Instructions| ATSAgent
+        ATSAgent -->|Generate Draft| Draft[Initial Draft]
+        
+        %% Self-Correction Loop
+        Draft -->|Audit Draft| InternalAudit{CTS Score > 90?}
+        InternalAudit -->|No| Refine[Refine Strategy] --> Draft
+        InternalAudit -->|Yes| Final[Final Optimized Resume]
+        
+        %% Failover Logic (Visualized)
+        subgraph "Resilience Layer"
+            ATSAgent -.->|Try| OR1[OpenRouter Key 1]
+            OR1 -.->|Fail| OR2[OpenRouter Key 2]
+            OR2 -.->|Fail| Google[Google Gemini Native]
+        end
     end
     
-    NewResume -->|Return| Frontend
-    Frontend -->|Display| Dashboard[Results Dashboard]
+    Final -->|Return Markdown| Frontend
+    Frontend -->|Render| Dashboard[Split-View Dashboard]
 ```
 
 ---
