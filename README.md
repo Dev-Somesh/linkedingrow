@@ -1,5 +1,7 @@
 # Linkedingrow AI - Advanced ATS Optimizer 🚀
 
+![Linkedingrow AI Dashboard](public/images/dashboard-preview.png)
+
 A professional, agentic AI platform designed to audit resumes against strict ATS (Applicant Tracking System) standards and rewrite them for 100% compliance and impact.
 
 ## ✨ Key Features
