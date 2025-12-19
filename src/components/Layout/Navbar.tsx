@@ -133,8 +133,8 @@ export const Navbar: React.FC = () => {
               <div className="ml-3">
                 {user ? (
                   <>
-                    <div className="text-base font-medium text-white">{user.name}</div>
-                    <div className="text-sm font-medium text-gray-400">{user.email}</div>
+                    <div className="text-base font-medium text-white">{user.localizedFirstName} {user.localizedLastName}</div>
+                    {/* <div className="text-sm font-medium text-gray-400">User</div> */}
                   </>
                 ) : (
                   <Link

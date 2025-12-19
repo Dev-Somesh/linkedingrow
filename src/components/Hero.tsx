@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react'; // Removed unused import
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FileText, CheckCircle, ArrowRight, Star, TrendingUp, AlertCircle, Sparkles } from 'lucide-react';
