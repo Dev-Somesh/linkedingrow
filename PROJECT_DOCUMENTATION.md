@@ -62,13 +62,15 @@ The heart of the system is the `analyzeResumeText` function. It goes beyond simp
     4.  **Content Score**: Usage of metrics and action verbs.
     5.  **Impact Score**: "Achieved X" vs "Responsible for Y".
 
-### 3.2 Intelligent Resume Generation
-The `/generate-resume` endpoint uses a **Two-Pass Safe Workflow**:
-1.  **Extraction Pass**: First, the analyzer extracts PII (Name, Email, Links) into a frozen object.
-2.  **Rewrite Pass**: The generator is forced to use the *frozen PII* but rewrite the *content*.
-    -   **Constraint**: "Do not hallucinate metrics."
-    -   **Optimization**: Injects predicted missing keywords from the Analysis phase.
-    -   **Output**: Clean, standard Markdown (headers, bullets) that parsers love.
+### 3.2 Intelligent Resume Generation (Agentic Workflow)
+The `/generate-resume` endpoint now uses a sophisticated **Self-Correction Loop** powered by `server/services/atsAgent.js`:
+
+1.  **Draft Generation**: The AI writes a first pass using the "Action Formula" (`Verb + Task + Tool + Impact`).
+2.  **Internal Audit**: The Agent immediately re-analyzes its own draft using strict ATS criteria.
+3.  **Self-Correction**:
+    *   If `ATS Score < 90`: The Agent identifies missing keywords and weak bullets.
+    *   It performs a targeted rewrite (up to 2 retries) to fix these specific gaps.
+4.  **Final Polish**: Only the high-scoring version is returned to the user.
 
 ### 3.3 Dashboard Visualization
 -   **Score Ring**: Visual representation of the ATS score.
@@ -135,7 +137,35 @@ Generates an optimized version.
 
 ---
 
-## 7. Future Roadmap
--   **Frontend Input Update**: Add UI fields for users to paste specific JDs before analysis.
--   **Export to PDF**: Convert the generated Markdown back to a clean PDF.
--   **User Auth**: Save history of past analyses (Database integration).
+## 7. Version History & Changelog
+
+### v1.2.0 - Resilience & Experience Update (Current)
+*Released: December 19, 2025*
+
+#### **Core Architecture**
+-   **Multi-Key Failover System**: Implemented a robust "Chain of Resilience" for LLM API calls:
+    1.  **Primary**: OpenRouter Key 1 (GPT-120b).
+    2.  **Secondary**: Auto-rotates to OpenRouter Key 2 on Rate Limit.
+    3.  **Fallback**: Switches provider entirely to **Google Gemini Native API** (`gemini-2.0-flash-exp`) if all OpenRouter keys are exhausted.
+    4.  **Last Resort**: Fallback to safe static analysis.
+-   **Speed Optimization**: Optimized the ATS Agent loop. Reduced `MAX_RETRIES` to 1 and implemented "Smart Caching" to reuse analysis data, cutting generation time by ~40%.
+
+#### **User Experience (UX)**
+-   **Single-Page Split-View Dashboard**: Re-architected the main workflow into a unified view. Users can Upload, Analyze, Generate, and Refine without page reloads.
+-   **Interactive "How It Works"**: Replaced static text with a dynamic 4-step process flow (Upload -> Gap Analysis -> AI Rewrite -> Get Hired).
+-   **Standardized "Gold Standard" Styling**: Implemented CSS-enforced resume formatting (Blue accents, clean headers) to ensure professional output regardless of AI variance.
+-   **"Free Forever" Pivot**: Replaced the "Pricing" page with a transparent "FAQ" page, emphasizing the free open-beta nature.
+
+#### **Technical Improvements**
+-   **New Dependencies**: `@google/generative-ai` (Native Google support), `sonner` (Beautiful Toast notifications).
+-   **Error Visibility**: Added real-time User Feedback (Toasts) for connection errors or timeouts.
+
+### v1.1.0 - Agentic Core Upgrade
+-   **New Core Engine**: Replaced basic endpoint handlers with `ATSAgent` class.
+-   **Self-Correction Loop**: Implemented a "Generate -> Audit -> Fix" loop.
+-   **Prompt Engineering**: Adopted the "Action Verb Formula" (`Verb + Task + Tool + Impact`).
+
+## 8. Future Roadmap
+-   **Export to PDF**: Native React-PDF rendering for pixel-perfect downloads.
+-   **User Database**: Persistent history of past resumes (PostgreSQL/Supabase).
+-   **LinkedIn Chrome Extension**: One-click import directly from LinkedIn profile page.

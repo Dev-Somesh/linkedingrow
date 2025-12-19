@@ -19,15 +19,27 @@ export const Hero = () => {
 
           {/* Left Column: Text Content */}
           <div className="text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium mb-8"
-            >
-              <Star className="w-4 h-4 fill-blue-700" />
-              <span>Rated #1 Resume Optimizer</span>
-            </motion.div>
+            <div className="flex flex-wrap gap-3 justify-center lg:justify-start mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium"
+              >
+                <Star className="w-4 h-4 fill-blue-700" />
+                <span>Rated #1 Resume Optimizer</span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100 text-green-700 text-sm font-medium"
+              >
+                <CheckCircle className="w-4 h-4" />
+                <span>Free Forever - No Credit Card</span>
+              </motion.div>
+            </div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
@@ -61,11 +73,11 @@ export const Hero = () => {
                   Analyze My Resume <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link to="/about">
+              <a href="#how-it-works">
                 <Button variant="outline" size="lg" className="h-14 px-8 text-lg rounded-full border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900">
                   How it Works
                 </Button>
-              </Link>
+              </a>
             </motion.div>
 
             <motion.div

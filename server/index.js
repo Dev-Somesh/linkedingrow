@@ -4,8 +4,19 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import authRoutes from './routes/auth.js';
 import apiRoutes from './routes/api.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Explicitly load .env from the server directory
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+console.log("------------------------------------------------");
+const key = process.env.VITE_OPENAI_API_KEY || process.env.OPENROUTER_API_KEY;
+console.log("Server Startup: Loaded API Key ->", key ? `Yes (${key.substring(0, 10)}...)` : "NO (Missing)");
+console.log("------------------------------------------------");
 
 const app = express();
 const PORT = process.env.PORT || 3000;

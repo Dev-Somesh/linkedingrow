@@ -1,159 +1,137 @@
 import React, { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
+import { toast } from 'sonner';
 import { StatsCards } from '../components/Dashboard/StatsCards';
 import { ReportView } from '../components/Dashboard/ReportView';
 import { ResumePreview } from '../components/Dashboard/ResumePreview';
 import { useResumeStore } from '../store/resumeStore';
 import { generateResume } from '../services/api';
 import { Button } from '@/components/ui/button';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Dashboard: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const { analysis, atsScore, originalText, improvedVersion, setImprovedVersion, setATSScore, reset } = useResumeStore();
+  const { analysis, atsScore, originalText, improvedVersion, userDirectives, setImprovedVersion, setATSScore, reset } = useResumeStore();
 
   const handleGenerateResume = async () => {
     if (!originalText || !analysis) return;
 
     setIsGenerating(true);
     try {
-      const { generatedResume, newAnalysis } = await generateResume(originalText, analysis);
+      const { generatedResume, newAnalysis } = await generateResume(originalText, analysis, userDirectives);
       setImprovedVersion(generatedResume);
       if (newAnalysis && typeof newAnalysis.ats_score === 'number') {
         setATSScore(newAnalysis.ats_score);
       }
     } catch (e) {
       console.error(e);
+      toast.error("Failed to generate resume. Please check your connection or API key.");
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // State 1: Comparison View (Final Stage)
-  if (improvedVersion) {
-    return (
-      <div className="min-h-screen bg-gray-50/50 p-8 space-y-8">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Resume Transformation</h1>
-            <p className="text-muted-foreground mt-1">
-              Compare your original resume with the AI-optimized version.
-            </p>
-          </div>
-          <Button variant="outline" onClick={() => setImprovedVersion(null)}>
-            Back to Analysis
-          </Button>
+  return (
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50 overflow-hidden">
+
+      {/* LEFT PANEL: Inputs & Analysis */}
+      <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white h-full">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white z-10">
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-blue-600" />
+            Linkedingrow AI
+          </h1>
+          {(analysis || originalText) && (
+            <Button variant="ghost" size="sm" onClick={reset} className="text-gray-500">
+              New Upload
+            </Button>
+          )}
         </div>
 
-        {/* Content Comparison Area - Fixed Height Scrollable Windows */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex-1 overflow-y-auto p-8">
+          {!analysis ? (
+            <div className="max-w-xl mx-auto space-y-8 py-12">
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Optimize your resume for ATS.</h2>
+                <p className="text-gray-500 text-lg mb-8">Upload your PDF to get instant scoring, detailed feedback, and a perfectly formatted rewrite.</p>
+                <FileUpload onAnalysisComplete={() => { }} />
+              </motion.div>
 
-          {/* Old Resume */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-gray-700 flex items-center gap-2">
-              <span className="bg-gray-200 text-gray-700 px-2 py-0.5 rounded text-xs">BEFORE</span>
-              Original Content
-            </h3>
-            <div className="bg-white rounded-lg border shadow-sm h-[600px] overflow-hidden flex flex-col">
-              <div className="p-6 overflow-y-auto flex-1 bg-white">
-                <div className="prose prose-sm max-w-none text-gray-600 leading-relaxed whitespace-pre-line font-serif">
-                  {originalText}
+              <div className="grid grid-cols-2 gap-4 pt-8">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h3 className="font-semibold text-blue-900 mb-1">90+ ATS Score</h3>
+                  <p className="text-sm text-blue-700">Targeting top-tier parsing standards.</p>
+                </div>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h3 className="font-semibold text-green-900 mb-1">Smart Rewrite</h3>
+                  <p className="text-sm text-green-700">Context-aware bullet point improvements.</p>
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <ReportView
+                score={atsScore || 0}
+                analysis={analysis}
+                onGenerate={handleGenerateResume}
+                isGenerating={isGenerating}
+              />
+            </motion.div>
+          )}
+        </div>
+      </div>
 
-          {/* New Resume */}
-          <div className="space-y-3">
-            <h3 className="font-semibold text-blue-700 flex items-center gap-2">
-              <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">AFTER</span>
-              Optimized Resume
-            </h3>
-            <div className="h-[600px]">
+      {/* RIGHT PANEL: Output & Preview */}
+      <div className="w-full lg:w-1/2 bg-gray-100 h-full flex flex-col">
+        {improvedVersion ? (
+          <div className="h-full flex flex-col p-6 space-y-4">
+            {/* Refinement Bar - Sticky Top of Right Panel */}
+            <div className="bg-white p-3 rounded-lg border shadow-sm flex items-center gap-3 shrink-0">
+              <textarea
+                className="flex-1 p-2 text-sm border-none focus:ring-0 resize-none bg-transparent"
+                placeholder="Refine (e.g. 'Make summary shorter')..."
+                rows={1}
+                value={userDirectives}
+                onChange={(e) => useResumeStore.getState().setUserDirectives(e.target.value)}
+              />
+              <div className="h-6 w-px bg-gray-200"></div>
+              <Button
+                onClick={handleGenerateResume}
+                disabled={isGenerating}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {isGenerating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              </Button>
+            </div>
+
+            {/* Preview Area */}
+            <div className="flex-1 overflow-hidden rounded-xl shadow-lg border border-gray-200">
               <ResumePreview content={improvedVersion} onBack={() => { }} />
             </div>
           </div>
-        </div>
-
-        {/* Analytics Section (Below Comparison) */}
-        <div className="pt-8 border-t">
-          <h2 className="text-2xl font-bold mb-6">Performance Analytics</h2>
-          <StatsCards />
-        </div>
-      </div>
-    );
-  }
-
-  // State 2: Analysis View (Middle Stage)
-  if (analysis) {
-    return (
-      <div className="min-h-screen bg-gray-50/50 p-8 space-y-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Analysis Report</h1>
-            <p className="text-muted-foreground mt-1">
-              Here is what we found in your resume.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="ghost" onClick={reset}>Upload New Resume</Button>
-          </div>
-        </div>
-
-        {/* Dashboard of Metrics */}
-        <ReportView
-          score={atsScore || 0}
-          analysis={analysis}
-          onGenerate={handleGenerateResume}
-          isGenerating={isGenerating}
-        />
-      </div>
-    );
-  }
-
-  // State 3: Upload View (Initial Stage)
-  return (
-    <div className="min-h-screen bg-gray-50/50 p-8 flex flex-col items-center justify-center">
-      <div className="max-w-4xl text-center space-y-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex justify-center mb-6">
-            <div className="bg-blue-100 p-4 rounded-full">
-              <Sparkles className="w-12 h-12 text-blue-600" />
+        ) : analysis ? (
+          <div className="h-full flex flex-col p-8 overflow-y-auto">
+            <h3 className="font-bold text-gray-400 uppercase tracking-widest text-xs mb-6">Live Analysis Metrics</h3>
+            <StatsCards />
+            <div className="flex-1 flex items-center justify-center text-gray-400 text-sm mt-10 border-2 border-dashed border-gray-200 rounded-xl">
+              Waiting for generation...
             </div>
           </div>
-          <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 mb-6">
-            Transform Your Resume with <span className="text-blue-600">AI Intelligence</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Upload your PDF to unlock instant ATS scoring, skills gap analysis, and a professional rewrite—all powered by advanced AI.
-          </p>
-        </motion.div>
-
-        <div className="max-w-xl mx-auto mt-12 bg-white p-2 rounded-2xl shadow-xl border border-gray-100">
-          <FileUpload onAnalysisComplete={() => { }} />
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-left max-w-3xl mx-auto pt-8 border-t border-gray-200">
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-2">ATS Optimization</h3>
-            <p className="text-sm text-gray-500">Get past the robots with keyword-rich content tailored for Applicant Tracking Systems.</p>
+        ) : (
+          /* Empty State Hero */
+          <div className="h-full flex items-center justify-center p-12 text-center bg-gray-50/50">
+            <div className="max-w-md space-y-4 opacity-50">
+              <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+              <p className="text-sm text-gray-400 pt-4">Preview will appear here after upload.</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Smart Formatting</h3>
-            <p className="text-sm text-gray-500">Auto-formatted Markdown output that looks professional and clean.</p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-2">Detailed Analytics</h3>
-            <p className="text-sm text-gray-500">Understand your strengths and weaknesses with scoring and insights.</p>
-          </div>
-        </div>
+        )}
       </div>
+
     </div>
   );
 };

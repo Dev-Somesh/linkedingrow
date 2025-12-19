@@ -20,20 +20,30 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ content, onBack })
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
         documentTitle: 'Optimized_Resume',
+        pageStyle: `
+            @page {
+                size: auto;
+                margin: 20mm;
+            }
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact;
+                }
+            }
+        `,
+        onAfterPrint: () => console.log("Print triggered successfully"),
+        onPrintError: (errorLocation, error) => console.error("Print failed", errorLocation, error),
     });
 
     return (
         <div className="h-full flex flex-col space-y-4">
             <div className="flex items-center justify-between flex-shrink-0">
-                <Button variant="outline" onClick={onBack} size="sm">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Report
-                </Button>
                 <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={handleCopy}>
                         <Copy className="w-4 h-4 mr-2" /> Copy Text
                     </Button>
                     <Button size="sm" onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700">
-                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                        <Download className="w-4 h-4 mr-2" /> Print / Save PDF
                     </Button>
                 </div>
             </div>
@@ -48,12 +58,24 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ content, onBack })
                         <div className="text-gray-800 text-sm leading-relaxed font-sans text-justify print:text-black">
                             <ReactMarkdown
                                 components={{
-                                    h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-gray-900 border-b-2 border-gray-900 pb-2 mb-6 uppercase tracking-tight break-after-avoid" {...props} />,
-                                    h2: ({ node, ...props }) => <h2 className="text-lg font-bold text-blue-800 border-b border-gray-200 mt-6 mb-3 pb-1 uppercase tracking-wide break-after-avoid" {...props} />,
-                                    h3: ({ node, ...props }) => <h3 className="text-md font-bold text-gray-800 mt-4 mb-2 break-after-avoid" {...props} />,
-                                    p: ({ node, ...props }) => <p className="mb-3 leading-relaxed" {...props} />,
-                                    ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-4 space-y-1" {...props} />,
-                                    li: ({ node, ...props }) => <li className="pl-1" {...props} />,
+                                    h1: ({ node, ...props }) => (
+                                        <h1 className="text-4xl font-black text-gray-900 border-b-[3px] border-gray-900 pb-2 mb-6 uppercase tracking-wider text-center break-after-avoid" {...props} />
+                                    ),
+                                    h2: ({ node, ...props }) => (
+                                        <h2 className="text-xl font-bold text-blue-700 border-b-2 border-blue-200 mt-6 mb-3 pb-1 uppercase tracking-wide break-after-avoid flex items-center" {...props} />
+                                    ),
+                                    h3: ({ node, ...props }) => (
+                                        <h3 className="text-lg font-bold text-gray-800 mt-4 mb-1 break-after-avoid" {...props} />
+                                    ),
+                                    p: ({ node, ...props }) => (
+                                        <p className="mb-2 leading-relaxed text-gray-700 text-justify" {...props} />
+                                    ),
+                                    ul: ({ node, ...props }) => (
+                                        <ul className="list-disc pl-5 mb-4 space-y-1.5 text-gray-700" {...props} />
+                                    ),
+                                    li: ({ node, ...props }) => (
+                                        <li className="pl-1 marker:text-blue-500" {...props} />
+                                    ),
                                     hr: ({ node, ...props }) => <hr className="my-6 border-gray-300" {...props} />,
                                     strong: ({ node, ...props }) => <strong className="font-bold text-gray-900" {...props} />,
                                 }}

@@ -168,25 +168,58 @@ const Features = () => {
         </div>
 
         {/* Visual Timeline / Workflow */}
-        <div className="mt-32">
-          <h3 className="text-3xl font-bold text-center text-gray-900 mb-16">Your path to hired</h3>
-          <div className="relative">
-            {/* Connecting Line */}
-            <div className="hidden md:block absolute top-[28px] left-0 w-full h-1 bg-gradient-to-r from-blue-200 via-purple-200 to-green-200 rounded-full -z-10" />
+        <div id="how-it-works" className="mt-32 scroll-mt-24">
+          <div className="text-center mb-16">
+            <h2 className="text-blue-600 font-semibold mb-4 tracking-wide uppercase text-sm">The Process</h2>
+            <h3 className="text-3xl font-bold text-gray-900">How It Works</h3>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div className="relative max-w-5xl mx-auto">
+            {/* Connecting Line (Desktop) */}
+            <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 -translate-y-1/2" />
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {[
-                { title: "Upload PDF", icon: Upload, desc: "Drag & drop your LinkedIn PDF export" },
-                { title: "AI Analysis", icon: Search, desc: "Deep scan against thousands of job descriptions" },
-                { title: "Download", icon: FileCheck, desc: "Get your optimized, ATS-ready resume" }
+                {
+                  title: "1. Upload & Scan",
+                  icon: Upload,
+                  desc: "Upload your PDF. Our engine extracts text and structure instantly.",
+                  color: "bg-blue-100 text-blue-600"
+                },
+                {
+                  title: "2. Gap Analysis",
+                  icon: Search,
+                  desc: "We check against 50+ ATS rules and identify missing keywords.",
+                  color: "bg-indigo-100 text-indigo-600"
+                },
+                {
+                  title: "3. AI Rewrite",
+                  icon: Zap,
+                  desc: "Our AI rewrites your bullets to be impact-driven and forceful.",
+                  color: "bg-purple-100 text-purple-600"
+                },
+                {
+                  title: "4. Get Hired",
+                  icon: CheckCircle,
+                  desc: "Download your perfected resume and triple your interview callbacks.",
+                  color: "bg-green-100 text-green-600"
+                }
               ].map((step, i) => (
-                <div key={i} className="flex flex-col items-center bg-white p-4">
-                  <div className="w-16 h-16 rounded-full bg-white border-4 border-gray-50 shadow-xl flex items-center justify-center mb-6 z-10">
-                    <step.icon className="w-6 h-6 text-gray-700" />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.2 }}
+                  className="relative group cursor-default"
+                >
+                  <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-shadow h-full flex flex-col items-center text-center">
+                    <div className={`w-14 h-14 rounded-full ${step.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                      <step.icon className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
                   </div>
-                  <h4 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h4>
-                  <p className="text-sm text-gray-500 max-w-[200px] mx-auto">{step.desc}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>

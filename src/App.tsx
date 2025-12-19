@@ -11,7 +11,7 @@ const Features = React.lazy(() => import('./components/Features'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const AuthCallback = React.lazy(() => import('./pages/AuthCallback'));
-const Pricing = React.lazy(() => import('./pages/Pricing'));
+const FAQ = React.lazy(() => import('./pages/FAQ'));
 const About = React.lazy(() => import('./pages/About'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const Privacy = React.lazy(() => import('./pages/Privacy'));
@@ -65,7 +65,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/faq" element={<FAQ />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />

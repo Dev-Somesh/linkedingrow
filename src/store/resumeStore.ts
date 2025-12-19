@@ -48,10 +48,12 @@ interface ResumeState {
   analysis: AnalysisResult | null;
   improvedVersion: string | null;
   atsScore: number | null;
+  userDirectives: string;
   setOriginalText: (text: string) => void;
   setAnalysis: (analysis: AnalysisResult) => void;
   setImprovedVersion: (text: string | null) => void;
   setATSScore: (score: number) => void;
+  setUserDirectives: (text: string) => void;
   reset: () => void;
 }
 
@@ -60,14 +62,17 @@ export const useResumeStore = create<ResumeState>((set) => ({
   analysis: null,
   improvedVersion: null,
   atsScore: null,
+  userDirectives: "",
   setOriginalText: (text) => set({ originalText: text }),
   setAnalysis: (analysis) => set({ analysis }),
   setImprovedVersion: (text) => set({ improvedVersion: text }),
   setATSScore: (score) => set({ atsScore: score }),
+  setUserDirectives: (text) => set({ userDirectives: text }),
   reset: () => set({
     originalText: null,
     analysis: null,
     improvedVersion: null,
-    atsScore: null
+    atsScore: null,
+    userDirectives: ""
   })
 }));

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, AlertTriangle, TrendingUp, RefreshCw, FileText } from 'lucide-react';
-import { Button } from '../Button'; // Fixed path (was ../components/Button) which is wrong if file is in Dashboard/
-// Actually, file is in src/components/Dashboard/ReportView.tsx.
-// Button is in src/components/Button.tsx?
-// Let's check FileUpload.tsx, it's in src/components, so it imports ./Button.
-// So from Dashboard/ReportView.tsx, it should be ../Button.
+import { Button } from '../Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useResumeStore } from '../../store/resumeStore';
 
 interface ReportViewProps {
     score: number;
@@ -61,28 +58,37 @@ export const ReportView: React.FC<ReportViewProps> = ({ score, analysis, onGener
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex items-center gap-6">
-                            <div className="relative w-24 h-24">
-                                <svg className="w-full h-full transform -rotate-90">
-                                    <circle cx="48" cy="48" r="40" stroke="#bfdbfe" strokeWidth="8" fill="transparent" />
+                        <div className="flex flex-col items-center justify-center w-full py-4">
+                            <div className="relative w-40 h-40">
+                                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                     <circle
-                                        cx="48" cy="48" r="40"
-                                        stroke={score > 70 ? "#2563eb" : "#eab308"}
+                                        cx="50" cy="50" r="45"
+                                        stroke="#e2e8f0"
                                         strokeWidth="8"
                                         fill="transparent"
-                                        strokeDasharray={`${score * 2.51} 251`}
+                                    />
+                                    <circle
+                                        cx="50" cy="50" r="45"
+                                        stroke={score >= 90 ? "#22c55e" : score >= 70 ? "#3b82f6" : "#eab308"}
+                                        strokeWidth="8"
+                                        fill="transparent"
+                                        strokeDasharray={`${score * 2.83}, 283`}
                                         strokeLinecap="round"
+                                        className="transition-all duration-1000 ease-out"
                                     />
                                 </svg>
-                                <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-gray-900">
-                                    {score}
-                                </span>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span className="text-4xl font-extrabold text-gray-900">
+                                        {score}
+                                    </span>
+                                    <span className="text-xs font-semibold uppercase text-gray-500 tracking-wider">
+                                        Score
+                                    </span>
+                                </div>
                             </div>
-                            <div>
-                                <p className="text-sm text-gray-600 mb-2">
-                                    {score > 70 ? "Great job! Your profile is mostly optimized." : "Room for improvement. See suggestions below."}
-                                </p>
-                            </div>
+                            <p className="mt-4 text-center text-sm font-medium text-gray-600 max-w-[80%]">
+                                {score >= 90 ? "Excellent! Your resume is top-tier." : score >= 70 ? "Good foundation, but needs polishing." : "Needs significant optimization."}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -95,9 +101,22 @@ export const ReportView: React.FC<ReportViewProps> = ({ score, analysis, onGener
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-gray-700 mb-6">
-                            We've identified key areas to improve. You can manually update your LinkedIn profile, or let our AI generate a optimized resume for you.
+                        <p className="text-gray-700 mb-4">
+                            Ready to transform? Let our AI rewrite your resume.
                         </p>
+
+                        <div className="mb-4">
+                            <label className="text-sm font-medium text-gray-700 mb-1 block">
+                                Custom Instructions (Optional)
+                            </label>
+                            <textarea
+                                className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 min-h-[80px]"
+                                placeholder="E.g., 'Emphasize my leadership in Project X', 'Remove the temporary role in 2020', 'Make it strictly 1 page'."
+                                value={useResumeStore((state) => state.userDirectives)}
+                                onChange={(e) => useResumeStore.getState().setUserDirectives(e.target.value)}
+                            />
+                        </div>
+
                         <Button
                             onClick={onGenerate}
                             disabled={isGenerating}

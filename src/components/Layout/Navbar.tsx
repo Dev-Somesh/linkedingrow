@@ -40,8 +40,8 @@ export const Navbar: React.FC = () => {
             <Link to="/" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
               Home
             </Link>
-            <Link to="/pricing" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
-              Pricing
+            <Link to="/faq" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
+              FAQ
             </Link>
             <Link to="/about" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
               About
@@ -107,11 +107,11 @@ export const Navbar: React.FC = () => {
               Dashboard
             </Link>
             <Link
-              to="/pricing"
+              to="/faq"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800/50"
               onClick={() => setIsMenuOpen(false)}
             >
-              Pricing
+              FAQ
             </Link>
             <Link
               to="/about"

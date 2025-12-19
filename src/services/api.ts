@@ -86,12 +86,13 @@ export const analyzePDF = async (file: File) => {
 
 // Generate/Rewrite Resume
 // Generate/Rewrite Resume
-export const generateResume = async (originalText: string, analysisResult: AnalysisResult) => {
+export const generateResume = async (originalText: string, analysisResult: AnalysisResult, userDirectives?: string) => {
   try {
     // Increase timeout for generation
     const response = await api.post('/generate-resume', {
       originalText,
-      analysisResult
+      analysisResult,
+      userDirectives
     }, {
       timeout: 300000 // 5 minutes to handle rate limit backoffs
     });
