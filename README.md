@@ -1,91 +1,102 @@
-# Resume AI - Advanced ATS Optimizer
+# Linkedingrow AI - Advanced ATS Optimizer 🚀
 
-A powerful, AI-driven application designed to analyze resumes against ATS (Applicant Tracking System) standards and rewrite them for maximum impact.
+A professional, agentic AI platform designed to audit resumes against strict ATS (Applicant Tracking System) standards and rewrite them for 100% compliance and impact.
 
-## 🚀 Features
+## ✨ Key Features
 
-*   **Advanced ATS Analysis**: Breakdown of ATS Score, Match Score (Role Relevance), Format Score, and Content Impact.
-*   **Targeted Optimization**: Analyze and reqrite resumes against specific **Job Descriptions** and **Target Roles**.
-*   **AI-Powered Rewriting**: Uses state-of-the-art LLMs (`gpt-oss-120b` via OpenRouter) to completely rewrite resumes with professional formatting and keywords.
-*   **Safety First**: "Two-Pass" workflow ensures PII (Personal Identifiable Information) is preserved exactly and forbids hallucinated metrics.
-*   **Real-time Status Updates**: Visual feedback during analysis and generation stages.
-*   **Robust Architecture**: 
-    *   Frontend: React + Vite + Tailwind CSS + Framer Motion
-    *   Backend: Node.js + Express + Multer
-    *   AI Provider: OpenRouter (swappable with OpenAI/Groq)
-*   **Resilience**: Robust error handling with fallback reports ensures user experience never breaks even if AI models fail.
+### 🧠 Intelligent Agentic Core
+*   **Self-Correction Loop**: The AI doesn't just write; it *audits* its own work. If the generated resume scores <90 ATS, it automatically rewrites specific sections to fix gaps.
+*   **"Action Formula" Enforcement**: Strictly enforces bullet points to follow the `Strong Verb + Specific Task + Tool/Method + Impact Metric` structure.
+*   **Identity Preservation**: Uses a dual-pass separate extraction step to guarantee that dates, company names, and job titles remain 100% factually accurate.
+
+### 🛡️ Enterprise-Grade Resilience
+*   **Multi-Key Failover**: Automatically rotates between multiple OpenRouter API keys if rate limits are hit.
+*   **Hybrid Cloud Fallback**: If OpenRouter fails, the system instantly switches to **Google's Native Gemini 2.0 Flash API** to ensure zero downtime.
+*   **Safe Mode**: Graceful degradation to static analysis reports if all AI services are unreachable.
+
+### 🎨 Modern UI/UX
+*   **Single-Page Workflow**: Unified split-view dashboard for analyzing, rewriting, and comparing resumes without page reloads.
+*   **Interactive Visuals**: Dynamic "How It Works" infographic and animated ATS Score rings.
+*   **Smart Feedback**: Real-time toast notifications (`sonner`) keep you informed of the AI's thinking process.
+
+---
 
 ## 🛠️ Tech Stack
 
-*   **Frontend**: React (TypeScript), Lucide Icons, Shadcn/UI components.
-*   **Backend**: Express.js server for handling file uploads (`multer`) and PDF text extraction (`pdf-parse`).
-*   **AI Integration**: `@openrouter/sdk` connecting to free high-performance models.
-*   **Styling**: Modern, clean UI with Tailwind CSS.
+*   **Frontend**: React (Vite), TypeScript, Tailwind CSS, Framer Motion, Zustand (State), Sonner (Toasts).
+*   **Backend**: Node.js, Express.js, Multer.
+*   **AI Engine**: 
+    *   **Orchestrator**: `@openrouter/sdk` (GPT-120b, Llama 3).
+    *   **Fallback**: `@google/generative-ai` (Gemini 1.5/2.0 Flash).
+*   **Utilities**: `pdf-parse` (Extraction), `axios`.
+
+---
 
 ## 📦 Setup & Installation
 
 ### Prerequisites
 *   Node.js (v18+)
-*   An [OpenRouter API Key](https://openrouter.ai/keys) (Free)
+*   API Keys: [OpenRouter](https://openrouter.ai/) (Free) and/or [Google AI Studio](https://aistudio.google.com/) (Free).
 
 ### Installation
 
 1.  **Clone the repository**:
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/Dev-Somesh/linkedingrow.git
     cd linkedingrow
     ```
 
 2.  **Install Dependencies**:
     ```bash
-    # Install root dependencies
-    npm install
-
-    # Install server dependencies
-    cd server
-    npm install
+    npm install         # Root (concurrently)
+    cd server && npm install  # Backend
     cd ..
     ```
 
 3.  **Environment Configuration**:
-    Create a `.env` file in the root directory:
+    Create a `.env` file in the **root** directory (for frontend):
     ```env
-    # Client-side keys
     VITE_LINKEDIN_CLIENT_ID=your_id
     VITE_LINKEDIN_REDIRECT_URI=http://localhost:5173/auth/callback
-    VITE_OPENAI_API_KEY=sk-or-v1-your-openrouter-key
+    VITE_OPENAI_API_KEY=sk-or-v1-primary-key
     ```
     
-    Create a `server/.env` file:
+    Create a `.env` file in the **server** directory (for backend logic):
     ```env
     PORT=3000
-    SESSION_SECRET=your_secret_key
-    # The server reads VITE_OPENAI_API_KEY from root .env or you can set:
-    OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key
+    SESSION_SECRET=dev-secret-key
+    
+    # Primary & Secondary Keys for Rotation
+    OPENROUTER_API_KEY_1=sk-or-v1-primary-key
+    OPENROUTER_API_KEY_2=sk-or-v1-secondary-key
+    
+    # Native Google Backup (Highly Recommended)
+    GOOGLE_GENAI_API_KEY=AIzaSy...
     ```
 
 ### Running the Application
 
 4.  **Start Development Servers**:
-    This project runs both a frontend (Vite) and backend (Express) server.
-    
     ```bash
-    # From the root directory, this command starts both concurrently
     npm run dev:full
     ```
 
 5.  Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+---
+
 ## 🔍 How to Use
 
-1.  Navigate to the **Resume AI** tab in the dashboard.
-2.  **Drag & Drop** your PDF resume.
-3.  Wait for the **Analysis Report** (Score, Suggestions, Strengths).
-4.  Click **"Generate ATS Resume"** to get a polished, markdown-formatted version.
-5.  Copy the markdown or view the preview side-by-side.
+1.  **Upload**: Drag & drop your PDF resume on the Dashboard.
+2.  **Audit**: The AI performs a "Gap Analysis" against your target role.
+3.  **Generate**: Click **"Generate Optimized Resume"**. The Agent will loop until it achieves a >90 ATS score.
+4.  **Refine**: Use the "User Directives" box to give custom instructions (e.g., "Emphasize my leadership in Project X").
+5.  **Export**: Copy the Markdown or print to PDF using the polished preview.
+
+---
 
 ## ⚠️ Troubleshooting
 
-*   **404 Analysis Error**: Ensure the backend server is running on port 3000.
-*   **429 Rate Limit**: The free AI models have rate limits. The app handles this gracefully, but if you see repeated errors, wait a minute before retrying.
-*   **OpenRouter 404 Error**: If using free models, ensure you have enabled "Allow model providers to train on my data" in your [OpenRouter Privacy Settings](https://openrouter.ai/settings/privacy).
+*   **Rate Limits (429)**: The system handles this automatically! It will switch keys or providers. If you still see errors, all free tiers might be exhausted for the day.
+*   **Server Connection**: Ensure the backend is running on `http://localhost:3000`. The frontend proxies requests to this port.
+*   **PDF Parsing Issues**: Some image-based PDFs cannot be read. Ensure your PDF is text-selectable.
