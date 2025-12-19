@@ -1,10 +1,10 @@
 import axios, { AxiosError } from 'axios';
 import { useAuthStore } from '../store/authStore';
-import { LINKEDIN_CONFIG } from '../config/constants';
+import { AnalysisResult } from '../store/resumeStore';
 
-// Create axios instance with default config
+// Create axios instance
 export const api = axios.create({
-  baseURL: 'https://api.linkedin.com/v2',
+  baseURL: '/api', // Proxy will handle this
   timeout: 10000,
 });
 
@@ -21,71 +21,32 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config;
-    
-    // Handle 401 Unauthorized
-    if (error.response?.status === 401 && originalRequest) {
-      try {
-        // Attempt to refresh token
-        const token = await refreshAccessToken();
-        useAuthStore.getState().setAuth(token, null);
-        
-        // Retry original request
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return api(originalRequest);
-      } catch (refreshError) {
-        // If refresh fails, logout user
-        useAuthStore.getState().logout();
-        throw refreshError;
-      }
-    }
-    
+    // Basic error handling for now
     throw error;
   }
 );
 
-// LinkedIn OAuth URL generator
-export const getLinkedInAuthUrl = () => {
-  const params = new URLSearchParams({
-    response_type: LINKEDIN_CONFIG.responseType,
-    client_id: LINKEDIN_CONFIG.clientId,
-    redirect_uri: LINKEDIN_CONFIG.redirectUri,
-    state: LINKEDIN_CONFIG.state,
-    scope: LINKEDIN_CONFIG.scope
-  });
-
-  return `https://www.linkedin.com/oauth/v2/authorization?${params}`;
-};
-
-// Exchange auth code for tokens
-export const getAccessToken = async (code: string) => {
+// Login with email/password
+export const loginWithEmail = async (email: string, password: string) => {
   try {
-    const response = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', {
-      grant_type: 'authorization_code',
-      code,
-      client_id: LINKEDIN_CONFIG.clientId,
-      client_secret: LINKEDIN_CONFIG.clientSecret,
-      redirect_uri: LINKEDIN_CONFIG.redirectUri,
+    const response = await api.post('/auth/login', {
+      email,
+      password
     });
     return response.data.access_token;
   } catch (error) {
-    throw new Error('Failed to get access token');
+    console.error('Login Failed', error);
+    throw new Error('Failed to login');
   }
 };
 
-// Refresh access token
+// Removed LinkedIn OAuth specific helpers
+
+
+// Refresh access token (Optional for MVP, implemented on backend if needed)
 export const refreshAccessToken = async () => {
-  try {
-    const response = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', {
-      grant_type: 'refresh_token',
-      refresh_token: useAuthStore.getState().refreshToken,
-      client_id: LINKEDIN_CONFIG.clientId,
-      client_secret: LINKEDIN_CONFIG.clientSecret,
-    });
-    return response.data.access_token;
-  } catch (error) {
-    throw new Error('Failed to refresh token');
-  }
+  // Placeholder implementation if store calls this
+  return null;
 };
 
 // Get user profile
@@ -94,6 +55,7 @@ export const getLinkedInProfile = async () => {
     const response = await api.get('/me');
     return response.data;
   } catch (error) {
+    console.error(error);
     throw new Error('Failed to fetch profile');
   }
 };
@@ -103,14 +65,43 @@ export const analyzePDF = async (file: File) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
-    
+
+    // Increase timeout for analysis
     const response = await api.post('/analyze-pdf', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      timeout: 300000 // 5 minutes to handle rate limit backoffs
     });
     return response.data;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('API Error Details:', error.response?.data || error.message);
+      throw new Error(error.response?.data?.error || 'Failed to analyze PDF');
+    }
+    console.error('Unexpected Error:', error);
     throw new Error('Failed to analyze PDF');
+  }
+};
+
+// Generate/Rewrite Resume
+// Generate/Rewrite Resume
+export const generateResume = async (originalText: string, analysisResult: AnalysisResult) => {
+  try {
+    // Increase timeout for generation
+    const response = await api.post('/generate-resume', {
+      originalText,
+      analysisResult
+    }, {
+      timeout: 300000 // 5 minutes to handle rate limit backoffs
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Generation Error:', error.response?.data || error.message);
+    } else {
+      console.error('Generation Error:', error);
+    }
+    throw new Error('Failed to generate resume');
   }
 };

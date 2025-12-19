@@ -1,13 +1,56 @@
 import { create } from 'zustand';
 
+export interface AnalysisResult {
+  ats_score: number;
+  match_score: number;
+  format_score: number;
+  content_score: number;
+  impact_score: number;
+  keyword_coverage: {
+    present: string[];
+    missing: string[];
+    coverage_percent: number;
+  };
+  sections_detected: {
+    contact: boolean;
+    summary: boolean;
+    experience: boolean;
+    skills: boolean;
+    education: boolean;
+    projects: boolean;
+    certifications: boolean;
+  };
+  ats_red_flags: string[];
+  rewrite_plan: {
+    top_changes: string[];
+    role_keywords_to_inject: string[];
+    bullets_to_strengthen: string[];
+    format_fixes: string[];
+  };
+  extracted: {
+    name: string;
+    email: string;
+    phone: string;
+    links: string[];
+    skills_normalized: {
+      technical: string[];
+      tools: string[];
+      ai: string[];
+      domain: string[];
+      soft: string[];
+    };
+  };
+  confidence: number;
+}
+
 interface ResumeState {
   originalText: string | null;
-  analysis: string | null;
+  analysis: AnalysisResult | null;
   improvedVersion: string | null;
   atsScore: number | null;
   setOriginalText: (text: string) => void;
-  setAnalysis: (analysis: string) => void;
-  setImprovedVersion: (text: string) => void;
+  setAnalysis: (analysis: AnalysisResult) => void;
+  setImprovedVersion: (text: string | null) => void;
   setATSScore: (score: number) => void;
   reset: () => void;
 }
@@ -21,10 +64,10 @@ export const useResumeStore = create<ResumeState>((set) => ({
   setAnalysis: (analysis) => set({ analysis }),
   setImprovedVersion: (text) => set({ improvedVersion: text }),
   setATSScore: (score) => set({ atsScore: score }),
-  reset: () => set({ 
-    originalText: null, 
-    analysis: null, 
-    improvedVersion: null, 
-    atsScore: null 
+  reset: () => set({
+    originalText: null,
+    analysis: null,
+    improvedVersion: null,
+    atsScore: null
   })
 }));

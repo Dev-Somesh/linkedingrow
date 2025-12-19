@@ -1,160 +1,99 @@
 import React from 'react';
-import { Check } from 'lucide-react';
+import { Check, Zap } from 'lucide-react';
 import { Button } from '../components/Button';
 import { useNavigate } from 'react-router-dom';
 
-const plans = [
-  {
-    name: 'Free',
-    price: '$0',
-    description: 'Basic profile analysis for individuals',
-    features: [
-      'Basic profile analysis',
-      'Skills assessment',
-      'Limited recommendations',
-      '1 profile per month',
-      'Export basic reports'
-    ],
-    cta: 'Get Started',
-    highlighted: false
-  },
-  {
-    name: 'Pro',
-    price: '$9.99',
-    period: 'per month',
-    description: 'Advanced insights for professionals',
-    features: [
-      'Advanced profile analysis',
-      'Detailed skills assessment',
-      'Personalized recommendations',
-      'Unlimited profiles',
-      'Export detailed reports',
-      'Network analysis',
-      'Competitor benchmarking'
-    ],
-    cta: 'Start Free Trial',
-    highlighted: true
-  },
-  {
-    name: 'Team',
-    price: '$29.99',
-    period: 'per month',
-    description: 'Complete solution for teams and businesses',
-    features: [
-      'Everything in Pro',
-      'Team dashboard',
-      'Bulk profile analysis',
-      'Advanced analytics',
-      'Custom reporting',
-      'API access',
-      'Priority support'
-    ],
-    cta: 'Contact Sales',
-    highlighted: false
-  }
-];
-
-const Pricing: React.FC = () => {
+const Pricing = () => {
   const navigate = useNavigate();
-  
-  const handlePlanSelect = (plan: string) => {
-    navigate('/dashboard');
-  };
-  
+
   return (
-    <div className="bg-gray-50 py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
-            Choose the plan that's right for you
+    <div className="bg-white py-24 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl sm:text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Priority access for everyone</h2>
+          <p className="mt-6 text-lg leading-8 text-gray-600">
+            We believe career growth should be accessible. That's why LinkedIn Evolved is completely free for individual professionals.
           </p>
         </div>
-        
-        <div className="mt-16 grid gap-8 lg:grid-cols-3">
-          {plans.map((plan) => (
-            <div 
-              key={plan.name}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden
-                ${plan.highlighted ? 'ring-2 ring-blue-600 transform lg:-translate-y-2' : ''}
-              `}
-            >
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
-                <div className="mt-4 flex items-baseline">
-                  <span className="text-4xl font-extrabold text-gray-900">{plan.price}</span>
-                  {plan.period && (
-                    <span className="ml-1 text-xl font-medium text-gray-500">{plan.period}</span>
-                  )}
+
+        <div className="mx-auto max-w-2xl rounded-3xl ring-1 ring-gray-200 mt-16 lg:mx-0 lg:flex lg:max-w-none">
+          <div className="p-8 sm:p-10 lg:flex-auto">
+            <h3 className="text-2xl font-bold tracking-tight text-gray-900">Lifetime Free Access</h3>
+            <p className="mt-6 text-base leading-7 text-gray-600">
+              Get full access to our advanced analysis engine without spending a dime. We're committed to helping you land your dream job.
+            </p>
+            <div className="mt-10 flex items-center gap-x-4">
+              <h4 className="flex-none text-sm font-semibold leading-6 text-blue-600">What's included</h4>
+              <div className="h-px flex-auto bg-gray-100" />
+            </div>
+            <ul role="list" className="mt-8 grid grid-cols-1 gap-4 text-sm leading-6 text-gray-600 sm:grid-cols-2 sm:gap-6">
+              {[
+                'Unlimited PDF Uploads',
+                'Detailed ATS Analysis',
+                'Keyword Optimization',
+                'Section-by-Section Score',
+                'Impact Recommendations',
+                'Downloadable Reports',
+                'Privacy-First Processing',
+                'Instant Results'
+              ].map((feature) => (
+                <li key={feature} className="flex gap-x-3">
+                  <Check className="h-6 w-5 flex-none text-blue-600" aria-hidden="true" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="-mt-2 p-2 lg:mt-0 lg:w-full lg:max-w-md lg:flex-shrink-0">
+            <div className="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
+              <div className="mx-auto max-w-xs px-8">
+                <p className="text-base font-semibold text-gray-600">Pay once, own it forever</p>
+                <div className="mt-6 flex items-baseline justify-center gap-x-2">
+                  <span className="text-5xl font-bold tracking-tight text-gray-900">$0</span>
+                  <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">USD</span>
                 </div>
-                <p className="mt-2 text-gray-500">{plan.description}</p>
-                
-                <ul className="mt-6 space-y-4">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start">
-                      <div className="flex-shrink-0">
-                        <Check className="h-5 w-5 text-green-500" />
-                      </div>
-                      <p className="ml-3 text-gray-700">{feature}</p>
-                    </li>
-                  ))}
-                </ul>
+                <div className="mt-10">
+                  <Button
+                    size="lg"
+                    className="w-full bg-blue-600 hover:bg-blue-500"
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    Get Started for Free
+                  </Button>
+                </div>
+                <p className="mt-6 text-xs leading-5 text-gray-600">
+                  No credit card required
+                </p>
               </div>
-              
-              <div className="px-6 pb-6">
-                <Button
-                  variant={plan.highlighted ? 'primary' : 'outline'}
-                  className="w-full"
-                  onClick={() => handlePlanSelect(plan.name)}
-                >
-                  {plan.cta}
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        <div className="mt-16 bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-gray-900">Frequently Asked Questions</h3>
-          </div>
-          
-          <div className="mt-8 grid gap-6 lg:grid-cols-2">
-            <div>
-              <h4 className="text-lg font-medium text-gray-900">How does the profile analysis work?</h4>
-              <p className="mt-2 text-gray-600">
-                Our AI-powered system analyzes your LinkedIn profile PDF to extract insights about your professional presence, 
-                skills, experience, and network. We then provide personalized recommendations to help you optimize your profile.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-medium text-gray-900">Is my data secure?</h4>
-              <p className="mt-2 text-gray-600">
-                Yes, we take data security seriously. Your profile information is processed securely and is never shared with 
-                third parties. All analysis happens on your device, and we don't store your profile data after analysis.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-medium text-gray-900">Can I cancel my subscription anytime?</h4>
-              <p className="mt-2 text-gray-600">
-                Absolutely. You can cancel your subscription at any time, and you won't be charged for the next billing cycle.
-                There are no long-term commitments or cancellation fees.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="text-lg font-medium text-gray-900">Do you offer refunds?</h4>
-              <p className="mt-2 text-gray-600">
-                Yes, we offer a 14-day money-back guarantee if you're not satisfied with our service. Simply contact our 
-                support team within 14 days of your purchase for a full refund.
-              </p>
             </div>
           </div>
         </div>
+
+        {/* FAQ Section */}
+        <div className="mx-auto max-w-2xl mt-24 divide-y divide-gray-900/10 active:none">
+          <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900 mb-8">Frequently asked questions</h2>
+          <dl className="space-y-8 divide-y divide-gray-900/10">
+            <div className="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+              <dt className="text-base font-semibold leading-7 text-gray-900 lg:col-span-12">Is it really free?</dt>
+              <dd className="mt-4 text-base leading-7 text-gray-600 lg:col-span-12 lg:mt-2">
+                Yes! We are currently in open beta and offering full access to all features for free to help gather feedback and improve the product.
+              </dd>
+            </div>
+            <div className="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+              <dt className="text-base font-semibold leading-7 text-gray-900 lg:col-span-12">Do I need a LinkedIn Premium account?</dt>
+              <dd className="mt-4 text-base leading-7 text-gray-600 lg:col-span-12 lg:mt-2">
+                No, this tool works with any LinkedIn profile. You just need to export your profile to PDF from your LinkedIn page.
+              </dd>
+            </div>
+            <div className="pt-8 lg:grid lg:grid-cols-12 lg:gap-8">
+              <dt className="text-base font-semibold leading-7 text-gray-900 lg:col-span-12">Is my data safe?</dt>
+              <dd className="mt-4 text-base leading-7 text-gray-600 lg:col-span-12 lg:mt-2">
+                Absolutely. All analysis happens in your browser session. We do not store your personal data or your PDF files.
+              </dd>
+            </div>
+          </dl>
+        </div>
+
       </div>
     </div>
   );

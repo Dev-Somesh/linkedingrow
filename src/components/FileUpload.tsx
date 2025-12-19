@@ -1,28 +1,47 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Upload, FileText, AlertCircle } from 'lucide-react';
 import { Button } from './Button';
 import { motion } from 'framer-motion';
-import { extractTextFromPDF } from '../services/pdf';
-import { analyzeResume, improveResume } from '../services/openai';
+import { analyzePDF } from '../services/api';
 import { useResumeStore } from '../store/resumeStore';
 
 interface FileUploadProps {
   onAnalysisComplete: () => void;
 }
 
+const ANALYSIS_STEPS = [
+  "Uploading PDF...",
+  "Extracting content...",
+  "Analyzing keywords...",
+  "Identifying gaps...",
+  "Generating insights..."
+];
+
 export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const { setOriginalText, setAnalysis, setImprovedVersion, setATSScore } = useResumeStore();
+  const [analysisStep, setAnalysisStep] = useState(0);
+  const { setOriginalText, setAnalysis, setATSScore } = useResumeStore();
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isAnalyzing) {
+      setAnalysisStep(0);
+      interval = setInterval(() => {
+        setAnalysisStep(prev => (prev + 1) % ANALYSIS_STEPS.length);
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [isAnalyzing]);
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     if (rejectedFiles.length > 0) {
       setFileError('Please upload a valid PDF file');
       return;
     }
-    
+
     if (acceptedFiles.length > 0) {
       setFileError(null);
       setSelectedFile(acceptedFiles[0]);
@@ -45,26 +64,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) =>
     setFileError(null);
 
     try {
-      // Extract text from PDF
-      const text = await extractTextFromPDF(selectedFile);
-      if (!text || text.trim().length === 0) {
-        throw new Error('No text could be extracted from the PDF. Please ensure the file contains readable text.');
-      }
-      setOriginalText(text);
+      // Backend handles PDF text extraction and analysis now
+      const result = await analyzePDF(selectedFile);
 
-      // Analyze resume
-      const analysisResult = await analyzeResume(text);
-      setAnalysis(analysisResult);
-
-      // Extract ATS score from analysis
-      const scoreMatch = analysisResult.match(/ATS Compatibility Score: (\d+)/);
-      if (scoreMatch) {
-        setATSScore(parseInt(scoreMatch[1]));
+      if (result.originalText) {
+        setOriginalText(result.originalText);
       }
 
-      // Generate improved version
-      const improved = await improveResume(text, analysisResult);
-      setImprovedVersion(improved);
+      setAnalysis(result);
+      setATSScore(result.ats_score || 0);
 
       onAnalysisComplete();
     } catch (error) {
@@ -90,7 +98,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) =>
           ${selectedFile ? 'border-none' : 'border-2 border-dashed border-gray-300'}`}
       >
         <input {...getInputProps()} />
-        
+
         {!selectedFile ? (
           <>
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -107,7 +115,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) =>
             </Button>
           </>
         ) : (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center"
@@ -121,16 +129,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) =>
             <p className="text-sm text-gray-500 mb-6">
               {(selectedFile.size / 1024).toFixed(1)} KB
             </p>
-            
+
             <div className="flex gap-3">
-              <Button 
+              <Button
                 onClick={handleAnalyze}
                 disabled={isAnalyzing}
               >
-                {isAnalyzing ? 'Analyzing...' : 'Analyze Resume'}
+                {isAnalyzing ? 'Processing...' : 'Analyze Resume'}
               </Button>
-              <Button 
-                variant="secondary" 
+              <Button
+                variant="secondary"
                 size="sm"
                 onClick={handleRemoveFile}
                 disabled={isAnalyzing}
@@ -141,7 +149,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) =>
           </motion.div>
         )}
       </div>
-      
+
       {fileError && (
         <div className="bg-red-50 text-red-600 p-4 rounded-b-lg flex items-center">
           <AlertCircle className="w-5 h-5 mr-2" />
@@ -150,10 +158,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onAnalysisComplete }) =>
       )}
 
       {isAnalyzing && (
-        <div className="bg-blue-50 text-blue-700 p-4 rounded-b-lg">
+        <div className="bg-blue-50 text-blue-700 p-4 rounded-b-lg transition-all duration-300">
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-700 mr-3"></div>
-            <span>Analyzing your resume...</span>
+            <span className="font-medium animate-pulse">{ANALYSIS_STEPS[analysisStep]}</span>
           </div>
         </div>
       )}

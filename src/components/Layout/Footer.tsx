@@ -26,29 +26,29 @@ export const Footer: React.FC = () => {
               <Sparkles className="w-4 h-4 ml-2 text-purple-400 animate-pulse" />
             </Link>
             <p className="mt-4 text-gray-400 max-w-md">
-              Transform your professional presence with quantum-powered AI insights and neural network optimization.
+              Transform your professional presence with advanced AI insights and actionable optimization strategies.
             </p>
             <div className="mt-6 flex space-x-6">
-              <a 
-                href="mailto:ITdeveloper06@gmail.com" 
+              <a
+                href="mailto:hello@someshbhardwaj.me"
                 className="text-gray-500 hover:text-gray-300 transition-colors"
               >
                 <span className="sr-only">Email</span>
                 <Mail className="h-6 w-6" />
               </a>
-              <a 
-                href="https://linkedin.com/in/ersomeshbhardwaj" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://linkedin.com/in/ersomeshbhardwaj"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-500 hover:text-gray-300 transition-colors"
               >
                 <span className="sr-only">LinkedIn</span>
                 <Linkedin className="h-6 w-6" />
               </a>
-              <a 
-                href="https://github.com/Dev-Somesh" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://github.com/Dev-Somesh"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-500 hover:text-gray-300 transition-colors"
               >
                 <span className="sr-only">GitHub</span>
@@ -56,7 +56,7 @@ export const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          
+
           <div>
             <h3 className="text-sm font-semibold text-gray-500 tracking-wider uppercase">Product</h3>
             <ul className="mt-4 space-y-4">
@@ -77,7 +77,7 @@ export const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h3 className="text-sm font-semibold text-gray-500 tracking-wider uppercase">Company</h3>
             <ul className="mt-4 space-y-4">
@@ -87,24 +87,24 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-base text-gray-400 hover:text-white transition-colors">
+                <Link to="/privacy" className="text-base text-gray-400 hover:text-white transition-colors">
                   Privacy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-base text-gray-400 hover:text-white transition-colors">
+                <Link to="/terms" className="text-base text-gray-400 hover:text-white transition-colors">
                   Terms
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-base text-gray-400 hover:text-white transition-colors">
+                <Link to="/contact" className="text-base text-gray-400 hover:text-white transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="mt-12 border-t border-gray-800 pt-8">
           <p className="text-base text-gray-500 text-center">
             &copy; {new Date().getFullYear()} LinkedIn Evolved. All rights reserved.

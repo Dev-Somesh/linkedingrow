@@ -13,6 +13,9 @@ const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const AuthCallback = React.lazy(() => import('./pages/AuthCallback'));
 const Pricing = React.lazy(() => import('./pages/Pricing'));
 const About = React.lazy(() => import('./pages/About'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+const Privacy = React.lazy(() => import('./pages/Privacy'));
+const Terms = React.lazy(() => import('./pages/Terms'));
 const Demo = React.lazy(() => import('./pages/Demo'));
 
 // Loading fallback
@@ -64,6 +67,9 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

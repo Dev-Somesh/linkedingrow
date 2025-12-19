@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Button } from '../Button';
+import { Button } from '@/components/ui/button';
 import { LogOut, User, Menu, X, Brain, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -35,13 +35,10 @@ export const Navbar: React.FC = () => {
               <Sparkles className="w-4 h-4 ml-2 text-purple-400 animate-pulse" />
             </Link>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
               Home
-            </Link>
-            <Link to="/dashboard" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
-              Dashboard
             </Link>
             <Link to="/pricing" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
               Pricing
@@ -49,7 +46,7 @@ export const Navbar: React.FC = () => {
             <Link to="/about" className="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition-colors">
               About
             </Link>
-            
+
             {user ? (
               <div className="flex items-center gap-4 ml-4">
                 <Link to="/dashboard">
@@ -58,9 +55,9 @@ export const Navbar: React.FC = () => {
                     Dashboard
                   </Button>
                 </Link>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="gap-2 bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 hover:text-white"
                   onClick={logout}
                 >
@@ -74,7 +71,7 @@ export const Navbar: React.FC = () => {
               </Link>
             )}
           </div>
-          
+
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
@@ -90,34 +87,34 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800/50"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800/50"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
             </Link>
-            <Link 
-              to="/pricing" 
+            <Link
+              to="/pricing"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800/50"
               onClick={() => setIsMenuOpen(false)}
             >
               Pricing
             </Link>
-            <Link 
-              to="/about" 
+            <Link
+              to="/about"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800/50"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -140,8 +137,8 @@ export const Navbar: React.FC = () => {
                     <div className="text-sm font-medium text-gray-400">{user.email}</div>
                   </>
                 ) : (
-                  <Link 
-                    to="/dashboard" 
+                  <Link
+                    to="/dashboard"
                     className="block text-base font-medium text-blue-400 hover:text-blue-300"
                     onClick={() => setIsMenuOpen(false)}
                   >
