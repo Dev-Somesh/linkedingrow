@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { motion } from 'framer-motion';
 import {
   Upload,
@@ -7,7 +7,6 @@ import {
   TrendingUp,
   Shield,
   Zap,
-  FileCheck,
   AlertCircle
 } from 'lucide-react';
 

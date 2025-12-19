@@ -1,6 +1,6 @@
-import React from 'react';
+// import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Target, send, Eye, TrendingUp, ArrowUpRight, FileText } from 'lucide-react';
+import { Target, Eye, TrendingUp, ArrowUpRight, FileText } from 'lucide-react';
 import { useResumeStore } from '../../store/resumeStore';
 
 export const StatsCards = () => {
