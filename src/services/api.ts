@@ -40,7 +40,16 @@ export const loginWithEmail = async (email: string, password: string) => {
   }
 };
 
-// Removed LinkedIn OAuth specific helpers
+// Exchange auth code for token
+export const getAccessToken = async (code: string) => {
+  try {
+    const response = await api.post('/auth/linkedin/callback', { code });
+    return response.data.access_token;
+  } catch (error) {
+    console.error('Token Exchange Failed', error);
+    throw new Error('Failed to exchange token');
+  }
+};
 
 
 // Refresh access token (Optional for MVP, implemented on backend if needed)
